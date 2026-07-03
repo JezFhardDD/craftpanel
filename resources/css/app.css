@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-family-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-family-minecraft: 'Minecraft', monospace, ui-monospace, Consolas;
+    --font-family-minecraftTen: 'MinecraftTen', monospace, ui-monospace, Consolas;
+  }
+
+  html {
+    font-family: var(--font-family-sans);
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Minecraft';
+    src: url('/fonts/MinecraftRegular-Bmg3.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'MinecraftTen';
+    src: url('/fonts/MinecraftTen-VGORe.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar by default */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  /* Show scrollbar on hover */
+  .scrollbar-hide:hover {
+    scrollbar-width: thin;  /* Firefox */
+  }
+  
+  .scrollbar-hide:hover::-webkit-scrollbar {
+    display: block;  /* Chrome, Safari and Opera */
+    width: 8px;
+    height: 8px;
+  }
+  
+  /* Optional: Style the scrollbar */
+  .scrollbar-hide:hover::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .scrollbar-hide:hover::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .scrollbar-hide:hover::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
