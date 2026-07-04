@@ -26,6 +26,7 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|string|in:Player,World Owner,Admin',
+            'g-recaptcha-response' => 'required|recaptcha',
         ]);
 
         $user = User::create([

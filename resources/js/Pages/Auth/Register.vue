@@ -1,5 +1,9 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import Recaptcha from '@/components/Recaptcha.vue';
+
+const recaptcha = ref(null);
 
 const form = useForm({
     name: '',
@@ -7,11 +11,15 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     role: 'Player', // Default role
+    'g-recaptcha-response': '',
 });
 
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+        onFinish: () => {
+            form.reset('password', 'password_confirmation', 'g-recaptcha-response');
+            recaptcha.value.reset(); 
+        }
     });
 };
 </script>
@@ -101,7 +109,16 @@ const submit = () => {
                         {{ form.errors.password_confirmation }}
                     </div>
                 </div>
-
+                <div class="mb-4">
+                    <Recaptcha
+                        ref="recaptcha"
+                        @verify="token => form['g-recaptcha-response'] = token"
+                        @expire="() => form['g-recaptcha-response'] = ''"
+                    />
+                    <div v-if="form.errors['g-recaptcha-response']" class="text-red-500 text-sm mt-1">
+                        {{ form.errors['g-recaptcha-response'] }}
+                    </div>
+                </div>
                 <!-- Submit -->
                 <div class="mb-6">
                     <button
