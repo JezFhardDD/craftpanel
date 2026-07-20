@@ -1,61 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# ⛏️ CRAFTPANEL
 
-## About Laravel
+**A Minecraft-inspired server & community management platform**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Built with Laravel, Inertia.js, and Vue 3
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Vue](https://img.shields.io/badge/Vue-3-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
+![Inertia.js](https://img.shields.io/badge/Inertia.js-2.0-9553E9?style=for-the-badge&logo=inertia&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+</div>
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📖 About
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**CRAFTPANEL** is a full-stack web application that simulates a Minecraft server management dashboard. It lets **Players** join worlds, complete quests, and climb leaderboards, while **World Owners** create and manage their own worlds, and **Admins** oversee the whole community.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> [!NOTE]
+> This project was built as a **school/academic exercise** to practice and learn full-stack web development — specifically the **Laravel + Inertia.js + Vue 3** stack. The main goals were to get hands-on experience with the framework's conventions, MVC architecture, authentication scaffolding, Eloquent relationships, and building a role-based SPA-like application. It is **not** a production-ready product — think of it as a structured playground for learning software engineering fundamentals (routing, controllers, models, migrations, middleware, policies, and component-driven frontend design).
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ✨ Features
 
-### Premium Partners
+- 🔐 **Authentication** — registration, login, email verification, password reset (Laravel Breeze-based)
+- 🧑‍🤝‍🧑 **Role-based access** — `Player`, `World Owner`, and `Admin` roles with dedicated dashboards and middleware guards
+- 🌍 **World management** — create, edit, join, leave, and delete worlds with configurable player limits, status, and backgrounds
+- 🗺️ **Quest system** — world owners create quests; players acquire, track progress, and complete them
+- 🏆 **Leaderboards** — global player rankings by level, XP, and kills
+- 👥 **Player profiles & stats** — level, XP, PvP/PvE kills, achievements, friends
+- 🛡️ **Authorization policies** — Laravel policies/gates controlling who can manage which world
+- ⚡ **SPA-like experience** — powered by Inertia.js, no separate REST API needed
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🏗️ Tech Stack & Architecture
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12 (PHP 8.2+) |
+| Frontend | Vue 3 (Composition API, `<script setup>`) |
+| Bridge | Inertia.js (server-driven SPA, no separate API layer) |
+| Styling | Tailwind CSS |
+| Database | SQLite (dev) — swappable via Laravel's DB config |
+| Auth | Laravel Breeze scaffolding |
+| Build tool | Vite |
 
-## Code of Conduct
+The app follows a fairly standard **Laravel MVC** structure, with Inertia used to render Vue "pages" instead of Blade views for the authenticated app:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+app/
+ ├── Http/
+ │    ├── Controllers/       # Route logic (Dashboard, World, Profile, Auth, etc.)
+ │    └── Middleware/        # Role-based route protection
+ ├── Models/                 # Eloquent models (User, World, Quest, Player, ...)
+ └── Policies/                # Authorization rules (WorldPolicy, etc.)
 
-## Security Vulnerabilities
+database/
+ ├── migrations/             # Schema definitions
+ └── factories/ & seeders/   # Test/demo data
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+resources/
+ ├── js/Pages/                # Vue pages rendered via Inertia
+ ├── js/Components/            # Reusable Vue components
+ └── js/Layouts/               # Shared page layouts
 
-## License
+routes/
+ ├── web.php                  # Application routes
+ └── auth.php                 # Auth-related routes
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🚀 Getting Started
+
+```bash
+# Install PHP dependencies
+composer install
+
+# Install JS dependencies
+npm install
+
+# Copy env file & generate app key
+cp .env.example .env
+php artisan key:generate
+
+# Set up the database (SQLite by default)
+touch database/database.sqlite
+php artisan migrate --seed
+
+# Run the app (server + queue + vite, all in one)
+composer run dev
+```
+
+Then visit `http://localhost:8000` 🎉
+
+---
+
+## 🎓 Learning Objectives
+
+This project was used as a hands-on way to practice:
+
+- Laravel's routing, controllers, and request validation
+- Eloquent relationships (`hasOne`, `belongsToMany`, pivot tables, policies)
+- Middleware-based role authorization
+- Inertia.js as a bridge between Laravel and Vue (no traditional REST API)
+- Component-based frontend architecture with Vue 3
+- Database migrations and schema evolution over time
+- General software engineering practices in a full-stack context
+
+---
+
+## 👥 Team
+
+Jezreel Villanueva: Fullstack Developer
+Ace York Buban: UI/UX Designer
+
+---
+
+## 📄 License
+
+This project is for educational purposes and is open for learning reference.
