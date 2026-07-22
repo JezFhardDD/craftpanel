@@ -21,11 +21,28 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'role' => 'Player',
+            'g-recaptcha-response' => 'test-token',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_password_must_meet_complexity_requirements(): void
+    {
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'simple',
+            'password_confirmation' => 'simple',
+            'role' => 'Player',
+            'g-recaptcha-response' => 'test-token',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertGuest();
     }
 }
