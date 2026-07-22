@@ -9,16 +9,24 @@ class AboutController extends Controller
     public function index()
     {
         $user = auth()->user();
+
         $data = [
-            'user' => $user,
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'role' => $user->role,
+            ] : [
+                'id' => null,
+                'name' => 'Guest',
+                'role' => null,
+            ],
+            'playerStats' => null,
+            'userRole' => $user?->role,
         ];
 
-        
-        if ($user->role === 'Player') {
+        if ($user?->role === 'Player' && $user->player) {
             $data['playerStats'] = $user->player;
         }
--
-        $data['userRole'] = $user->role;
 
         return Inertia::render('About', $data);
     }

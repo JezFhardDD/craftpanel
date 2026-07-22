@@ -28,7 +28,7 @@
                             class="flex items-center space-x-2 focus:outline-none"
                         >
                             <span class="text-white font-medium">{{
-                                user.name
+                                props.user?.name ?? 'Guest'
                             }}</span>
                             <!-- Conditional display based on user role -->
                             <div
@@ -41,7 +41,7 @@
                                 v-else
                                 class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-sm font-bold text-white"
                             >
-                                {{ user.name.charAt(0).toUpperCase() }}
+                                {{ (props.user?.name ?? 'G').charAt(0).toUpperCase() }}
                             </div>
                         </button>
 
@@ -83,6 +83,7 @@
                                 >About</Link
                             >
                             <Link
+                                v-if="props.user?.id"
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
@@ -271,12 +272,22 @@ import { Link } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 
 const props = defineProps({
-    user: Object,
+    user: {
+        type: Object,
+        default: () => ({
+            id: null,
+            name: 'Guest',
+            role: null,
+        }),
+    },
     playerStats: {
         type: Object,
         default: null
     },
-    userRole: String,
+    userRole: {
+        type: String,
+        default: null,
+    },
 });
 
 const dropdownOpen = ref(false);
