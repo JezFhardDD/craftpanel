@@ -44,6 +44,7 @@ class DashboardController extends Controller
                     'name' => $world->name,
                     'max_players' => $world->max_players,
                     'players_count' => $world->players->count(),
+                    'background_image' => $world->background_image,
                     'owner' => [
                         'name' => $world->owner->name,
                     ],
@@ -101,6 +102,7 @@ class DashboardController extends Controller
                         'status' => $world->status,
                         'max_players' => $world->max_players,
                         'players_count' => $world->players_count,
+                        'background_image' => $world->background_image,
                     ];
                 }),
             'otherWorlds' => World::where('owner_id', '!=', $user->id)
@@ -115,6 +117,7 @@ class DashboardController extends Controller
                         'name' => $world->name,
                         'max_players' => $world->max_players,
                         'players_count' => $world->players_count,
+                        'background_image' => $world->background_image,
                         'owner' => [
                             'name' => $world->owner->name,
                         ],

@@ -46,6 +46,7 @@ class ProfileController2 extends Controller
                 'max_players' => $world->max_players,
                 'current_players' => $world->players->count(),
                 'active_players' => $world->players->where('is_online', true)->count(),
+                'background_image' => $world->background_image,
                 'created_at' => $world->created_at->format('M d, Y'),
             ];
         });

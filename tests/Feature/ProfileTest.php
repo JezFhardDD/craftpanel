@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\World;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -19,6 +21,60 @@ class ProfileTest extends TestCase
             ->get('/profile');
 
         $response->assertOk();
+    }
+
+    public function test_world_owner_profile_includes_saved_world_backgrounds(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'World Owner',
+        ]);
+
+        $world = World::create([
+            'name' => 'Pale World',
+            'owner_id' => $user->id,
+            'max_players' => 10,
+            'status' => 'active',
+            'background_image' => 'pale',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('world-owner.profile'));
+
+        $response->assertOk();
+        $response->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->component('Profile/Profile2')
+                ->where('worlds.0.id', $world->id)
+                ->where('worlds.0.background_image', 'pale')
+        );
+    }
+
+    public function test_world_owner_viewing_their_world_detail_receives_owner_context(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'World Owner',
+        ]);
+
+        $world = World::create([
+            'name' => 'Pale World',
+            'owner_id' => $user->id,
+            'max_players' => 10,
+            'status' => 'active',
+            'background_image' => 'pale',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('worlds.show', $world));
+
+        $response->assertOk();
+        $response->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->component('Worlds/World2')
+                ->where('world.id', $world->id)
+                ->where('isOwner', true)
+        );
     }
 
     public function test_profile_information_can_be_updated(): void

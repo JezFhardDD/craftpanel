@@ -207,11 +207,13 @@ public function acquireQuest(Request $request, World $world, Quest $quest)
         $user = auth()->user();
         $world->load(['owner', 'players', 'quests.users']);
 
-        $isMember = $world->players->contains($user);
+        $isMember = $user ? $world->players->contains($user) : false;
+        $isOwner = $user ? $world->owner_id === $user->id : false;
 
         return Inertia::render('Worlds/World2', [
             'world' => $world,
             'isMember' => $isMember,
+            'isOwner' => $isOwner,
             'auth' => $user,
         ]);
     }

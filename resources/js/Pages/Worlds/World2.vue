@@ -1,5 +1,10 @@
 <template>
-  <div class="overflow-auto font-minecraft min-h-screen bg-gray-900">
+  <div
+    class="overflow-auto font-minecraft min-h-screen bg-cover bg-center bg-no-repeat"
+    :style="{
+      backgroundImage: pageBackground,
+    }"
+  >
     <!-- Navigation Header -->
     <nav class="fixed top-0 w-full bg-gray-900/95 backdrop-blur-sm z-50 border-b border-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,7 +63,7 @@
             
             <div class="flex justify-between items-center">
               <button
-                v-if="!isQuestJoined(quest)"
+                v-if="!isOwner && !isQuestJoined(quest)"
                 @click="acquireQuest(quest.id)"
                 class="text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm transition-colors"
                 :disabled="processingQuest === quest.id"
@@ -67,7 +72,7 @@
                 <span v-else>Join Quest</span>
               </button>
               <button
-                v-else
+                v-else-if="!isOwner"
                 @click="leaveQuest(quest.id)"
                 class="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm transition-colors"
                 :disabled="processingQuest === quest.id"
@@ -81,7 +86,7 @@
       </section>
 
       <!-- World Actions -->
-      <section class="flex flex-col md:flex-row justify-center gap-4 mb-10">
+      <section v-if="!isOwner" class="flex flex-col md:flex-row justify-center gap-4 mb-10">
         <button
           v-if="!isMember"
           @click="joinWorld"
@@ -105,13 +110,13 @@
       <!-- Back Button -->
       <div class="text-center">
         <Link
-          :href="route('worlds.index')"
+          :href="backRoute"
           class="inline-flex items-center bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
-          Back to Worlds List
+          {{ isOwner ? 'Back to Profile' : 'Back to Worlds List' }}
         </Link>
       </div>
     </main>
@@ -120,21 +125,50 @@
 
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 import { Link } from "@inertiajs/vue3";
 import { ref } from 'vue';
 
 const props = defineProps({
     world: Object,
     isMember: Boolean,
+    isOwner: Boolean,
     auth: Object,
 });
 
 const logoText = '/images/CRAFTPANEL.png';
 const logoImage = '/images/logo2bgr.png';
 
+const worldBackgrounds = {
+    default: "/images/wallpaper_minecraft_pc_bundle_1920x1080.png",
+    pale: "/images/Minecraft_TheGardenAwakens_DotNet_1920x1080.png",
+    trial: "/images/Minecraft_Trails&Tales_.Net_800x450.png",
+    boat: "/images/wallpaper_minecraft_adventure_1920x1080.png",
+    bees: "/images/wallpaper_minecraft_buzzybees_1920x1080.png",
+    jungle: "/images/wallpaper_minecraft_cats_pandas_1920x1080.png",
+    caves: "/images/wallpaper_minecraft_caves_cliffs(part2)_1920x1080.png",
+    island: "/images/wallpaper_minecraft_island_1920x1080.png",
+    mangroves: "/images/wallpaper_minecraft_mangroves_1920x1080.png",
+    mineshaft: "/images/wallpaper_minecraft_mineshaft_1920x1080.png",
+    nether: "/images/wallpaper_minecraft_nether_update_1920x1080.png",
+    ocean: "/images/wallpaper_minecraft_ocean_monument_1920x1080.png",
+    aqua: "/images/wallpaper_minecraft_update_aquatic_1920x1080.png",
+    village: "/images/wallpaper_minecraft_village_pillage_1920x1080.png",
+    warden: "/images/wallpaper_minecraft_warden_1920x1080.png",
+    wild: "/images/wallpaper_minecraft_wild_update_1920x1080.png",
+};
+
 const processingWorld = ref(false);
 const processingQuest = ref(null);
+
+const pageBackground = computed(() => {
+    const backgroundUrl = worldBackgrounds[props.world.background_image] || worldBackgrounds.default;
+    return `linear-gradient(rgba(17, 24, 39, 0.78), rgba(17, 24, 39, 0.88)), url(${backgroundUrl})`;
+});
+
+const backRoute = computed(() => {
+    return props.isOwner ? route('world-owner.profile') : route('worlds.index');
+});
 
 const joinedQuestIds = ref(
     props.world.quests
