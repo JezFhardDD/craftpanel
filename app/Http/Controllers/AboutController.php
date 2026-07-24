@@ -2,29 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AboutController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return Inertia::render('About', [
+                'user' => [
+                    'id' => null,
+                    'name' => 'Guest',
+                    'role' => null,
+                ],
+                'playerStats' => null,
+                'userRole' => null,
+            ]);
+        }
 
         $data = [
-            'user' => $user ? [
+            'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'role' => $user->role,
-            ] : [
-                'id' => null,
-                'name' => 'Guest',
-                'role' => null,
             ],
             'playerStats' => null,
-            'userRole' => $user?->role,
+            'userRole' => $user->role,
         ];
 
-        if ($user?->role === 'Player' && $user->player) {
+        if ($user->role === 'Player' && $user->player) {
             $data['playerStats'] = $user->player;
         }
 

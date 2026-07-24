@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\World;
 use App\Models\Quest;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\World;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class WorldController extends Controller
 {
@@ -26,58 +27,62 @@ class WorldController extends Controller
      * Display a listing of all worlds (for players to join or view).
      */
     public function index()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
+        $joinedWorldIds = [];
 
-    $worlds = World::query()
-        ->withCount('players')
-        ->with('owner')
-        ->where('status', 'active')
-        ->orderBy('created_at', 'desc')
-        ->get();
+        if ($user instanceof User) {
+            $joinedWorldIds = $user->worlds()->pluck('world_id')->toArray();
+        }
 
-    $joinedWorldIds = $user->worlds()->pluck('world_id')->toArray();
+        $worlds = World::query()
+            ->withCount('players')
+            ->with('owner')
+            ->where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return Inertia::render('Worlds/Index', [
-        'worlds' => $worlds->map(function ($world) {
-            return [
-                'id' => $world->id,
-                'name' => $world->name,
-                'max_players' => $world->max_players,
-                'players_count' => $world->players_count,
-                'owner_name' => $world->owner->name ?? 'Unknown',
-                'background_image' => $world->background_image,
-                'created_at' => $world->created_at->diffForHumans(),
-            ];
-        }),
-        'joinedWorldIds' => $joinedWorldIds,
-    ]);
-}
-public function acquireQuest(Request $request, World $world, Quest $quest)
-{
-    $user = $request->user();
-
-    // Ensure the quest belongs to this world
-    if ($quest->world_id !== $world->id) {
-        abort(403, 'This quest does not belong to this world.');
+        return Inertia::render('Worlds/Index', [
+            'worlds' => $worlds->map(function ($world) {
+                return [
+                    'id' => $world->id,
+                    'name' => $world->name,
+                    'max_players' => $world->max_players,
+                    'players_count' => $world->players_count,
+                    'owner_name' => $world->owner->name ?? 'Unknown',
+                    'background_image' => $world->background_image,
+                    'created_at' => $world->created_at->diffForHumans(),
+                ];
+            }),
+            'joinedWorldIds' => $joinedWorldIds,
+        ]);
     }
 
-    // Prevent duplicates
-    if ($user->quests()->where('quest_id', $quest->id)->exists()) {
-        return back()->with('error', 'You already joined this quest.');
+    public function acquireQuest(Request $request, World $world, Quest $quest)
+    {
+        $user = $request->user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        if ($quest->world_id !== $world->id) {
+            abort(403, 'This quest does not belong to this world.');
+        }
+
+        if ($user->quests()->where('quest_id', $quest->id)->exists()) {
+            return back()->with('error', 'You already joined this quest.');
+        }
+
+        $user->quests()->attach($quest->id, [
+            'progress' => 0,
+            'is_completed' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Quest joined successfully!');
     }
-
-    $user->quests()->attach($quest->id, [
-        'progress' => 0,
-        'is_completed' => false,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    return back()->with('success', 'Quest joined successfully!');
-}
-
-
 
     /**
      * Show the form for creating a new world.
@@ -88,13 +93,13 @@ public function acquireQuest(Request $request, World $world, Quest $quest)
 
         return Inertia::render('Worlds/Create', [
             'backgroundOptions' => World::$backgroundOptions,
-            'user' => auth()->user(),
+            'user' => Auth::user(),
             'defaultValues' => [
                 'name' => '',
                 'max_players' => 10,
                 'status' => 'active',
                 'background_image' => 'default',
-            ]
+            ],
         ]);
     }
     public function storeQuest(Request $request, World $world)
@@ -204,11 +209,11 @@ public function acquireQuest(Request $request, World $world, Quest $quest)
      */
     public function show(World $world)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $world->load(['owner', 'players', 'quests.users']);
 
-        $isMember = $user ? $world->players->contains($user) : false;
-        $isOwner = $user ? $world->owner_id === $user->id : false;
+        $isMember = $user instanceof User && $world->players->contains($user);
+        $isOwner = $user instanceof User && $world->owner_id === $user->id;
 
         return Inertia::render('Worlds/World2', [
             'world' => $world,

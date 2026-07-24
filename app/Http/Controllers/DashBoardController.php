@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\World;
+use App\Models\Player;
 use App\Models\Quest;
+use App\Models\User;
+use App\Models\World;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Models\Player;
-
 
 class DashboardController extends Controller
 {
     public function redirect()
     {
         $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
 
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
@@ -27,6 +31,10 @@ class DashboardController extends Controller
     public function player()
     {
         $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
 
         return Inertia::render('PlayerDashboard', [
             'user' => $user,
@@ -88,6 +96,10 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
         return Inertia::render('WorldOwnerDashboard', [
             'user' => $user,
             'ownedWorlds' => World::where('owner_id', $user->id)
@@ -145,7 +157,7 @@ class DashboardController extends Controller
     public function admin()
     {
         return Inertia::render('AdminDashboard', [
-            'user' => Auth::user()
+            'user' => Auth::user(),
         ]);
     }
 }
